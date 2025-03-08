@@ -10,6 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -23,7 +25,8 @@ public class ApplicationSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .authorizeHttpRequests(request -> request.requestMatchers("/public/**", "/actuator/**", "/h2-console/**").permitAll()
+                .authorizeHttpRequests(request -> request.requestMatchers("/public/**").permitAll()
+                        .requestMatchers( "/h2-console/**", "/actuator/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
@@ -31,8 +34,13 @@ public class ApplicationSecurityConfig {
 
     @Bean
     public UserDetailsService userDetails(){
-        UserDetails admin = User.withUserDetails(new User("admin", "{noop}admin", List.of(new SimpleGrantedAuthority("ADMIN")))).build();
-        UserDetails user = User.withUserDetails(new User("user", "{noop}user", List.of(new SimpleGrantedAuthority("USER")))).build();
+        UserDetails admin = User.withUserDetails(new User("admin", passwordEncoder().encode("admin"), List.of(new SimpleGrantedAuthority("ROLE_ADMIN")))).build();
+        UserDetails user = User.withUserDetails(new User("user", "{noop}user", List.of(new SimpleGrantedAuthority("ROLE_USER")))).build();
         return new InMemoryUserDetailsManager(List.of(admin, user));
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
