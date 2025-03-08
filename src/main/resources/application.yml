@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: security-demo
+
+server:
+  port: 9595
+
