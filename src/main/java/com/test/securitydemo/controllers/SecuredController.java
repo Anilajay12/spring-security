@@ -1,5 +1,6 @@
 package com.test.securitydemo.controllers;
 
+import com.test.securitydemo.dto.Message;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class SecuredController {
 
     @GetMapping("/greet")
-    public ResponseEntity<String> greet() {
+    public ResponseEntity<Message> greet() {
         return ResponseEntity
                 .status(200)
-                .body("Hi, This is Secured page");
+                .body(new Message("Hi, This is Secured page"));
     }
 }
