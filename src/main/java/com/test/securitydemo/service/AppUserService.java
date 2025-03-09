@@ -1,5 +1,8 @@
 package com.test.securitydemo.service;
 
+import com.test.securitydemo.config.jwt.JwtUtils;
+import com.test.securitydemo.dto.LoginRequest;
+import com.test.securitydemo.dto.LoginResponse;
 import com.test.securitydemo.dto.Message;
 import com.test.securitydemo.dto.RegistrationRequest;
 import com.test.securitydemo.model.AppRole;
@@ -10,9 +13,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +34,9 @@ public class AppUserService {
     private final AppRoleRepository appRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final  ModelMapper modelMapper;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
+    private final AppUserDetails appUserDetails;
 
     @Transactional
     public Message createUser(RegistrationRequest request) {
@@ -44,7 +56,6 @@ public class AppUserService {
 
             AppRole existingRole = appRoleRepository.findByRole(role.getRole());
 
-            
             if (existingRole == null) {
                 AppRole savedRole = appRoleRepository.save(role);
                 rolesToAssign.add(savedRole);
@@ -53,12 +64,6 @@ public class AppUserService {
             }
         }
 
-
-
-        log.warn("*********************");
-        rolesToAssign.forEach(x -> System.out.println(x.toString()));
-        log.warn("*********************");
-
         saveUser.setRoles(rolesToAssign);
         appUserRepository.save(saveUser);
         return new Message("registered successfully");
@@ -66,4 +71,15 @@ public class AppUserService {
     }
 
 
+    public LoginResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+        );
+        if(authenticate == null)
+            return new LoginResponse("invalid credentials");
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        String token = jwtUtils.generateToken((AppUserDetails) authenticate.getPrincipal());
+        return new LoginResponse(token);
+    }
 }

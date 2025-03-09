@@ -1,5 +1,7 @@
 package com.test.securitydemo.controllers;
 
+import com.test.securitydemo.dto.LoginRequest;
+import com.test.securitydemo.dto.LoginResponse;
 import com.test.securitydemo.dto.Message;
 import com.test.securitydemo.dto.RegistrationRequest;
 import com.test.securitydemo.service.AppUserService;
@@ -25,6 +27,15 @@ public class AuthenticationController {
         Message response = userService.createUser(request);
         return ResponseEntity
                 .status(201)
+                .body(response);
+    }
+
+
+    @PostMapping("/signin")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        LoginResponse response = userService.login(loginRequest);
+        return ResponseEntity
+                .status(200)
                 .body(response);
     }
 }

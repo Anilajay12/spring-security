@@ -21,7 +21,10 @@ spring:
 server:
   port: 9595
 
-
+my:
+  token:
+    expiry: 3600000
+    secret: AF23vsdfEfergERT574f5serg5se41g56er4g85set4g8e78gv475v47t78gh7r8h8
 
 #logging:
 #  level:
