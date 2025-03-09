@@ -1,24 +1,41 @@
-# Getting Started
+### Spring Security Using JWT Authentication
 
-### Reference Documentation
-For further reference, please consider the following sections:
+Required Tools
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/3.4.3/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.4.3/maven-plugin/build-image.html)
-* [Spring Web](https://docs.spring.io/spring-boot/3.4.3/reference/web/servlet.html)
+* Java 21
+* Any IDE based on your preference
+* Postman
 
-### Guides
-The following guides illustrate how to use some features concretely:
 
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
+### What is Jwt
 
-### Maven Parent overrides
+JWT stands for JSON Web Token, which is an open standard for securely transmitting information as a JSON object between parties, typically a client and a server.
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+* Jwt Token Format *
+<br />
+
+![img.png](img.png)
+
+* Implementation Class Details *
+
+
+JwtAuthenticationFilter - Handle the Jwt Authentication Logic
+
+JwtUtils: Utility Methods to extract the details from Header
+
+JwtAuthenticationEntryPoint - To handle the JWT Authentication Errors
+
+ApplicationSecurityConfig - To handle the request from Filter chain
+
+### Authentication Flow
+
+![img_1.png](img_1.png)
+
+* Authentication Controller - For API to handle the requests for Signup and Sign-in
+
+* AppRole & AppUser entities to store user information and privileges for authorization
+
+* AppRoleRepo & AppUserRepo to store the data to db using JPA Implementation
+
+* AppUserDetails & ApUserDetailsService are the security class implementations to find the user details from db to perform authentication
 
