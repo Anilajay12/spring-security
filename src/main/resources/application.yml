@@ -6,12 +6,25 @@ spring:
     console:
       enabled: true
 
+  datasource:
+    url: jdbc:h2:mem:test
 
 
-#  security:
-#    user:
-#      name: admin
-#      password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
 server:
   port: 9595
 
+
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: DEBUG
